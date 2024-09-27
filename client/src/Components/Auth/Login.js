@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import axios from "axios"
+import axios from "axios";
 
 import LoadingButton from "@mui/lab/LoadingButton";
 
@@ -24,19 +24,24 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoadingButton(true);
-   axios.post('http://localhost:8000/users/login', fields)
-      .then(res => {
-        navigate('/home')
-        localStorage.setItem('user',res)
+  const handleLogin = async (e) => {
+    try {
+      e.preventDefault();
+      setLoadingButton(true);
+      const res = await axios.post("http://localhost:8000/users/login", fields ,{withCredentials: true});
 
-      })
-      .catch((err)=>{
-        setLoadingButton(false)
-        alert(err)
-      })
+      console.log(res)
+      navigate("/home");
+      let details = res.data.result;
+
+      console.log(details);
+      localStorage.setItem("user", JSON.stringify(details));
+      localStorage.setItem('accesToken', JSON.stringify(res.data.accessToken))
+    } catch (err) {
+      console.log(err);
+      setLoadingButton(false);
+      alert(err.response.data.message);
+    }
   };
 
   return (

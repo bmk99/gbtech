@@ -58,19 +58,24 @@ export const fileUpload = async (req, res) => {
 };
 
 export const getAllFiles = async (req, res) => {
+  const {id} = req.params
   try {
-    const owner = req.user._id;
-    console.log(owner);
-    const files = await fileSchema.find({ owner: owner });
+    // const owner = req.user._id;
+    // console.log(owner);
+    const files = await fileSchema.find({ owner: id });
+    console.log(files)
 
     return res.status(200).json({
       message: "succes",
       result: files,
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({ message: error.message });
   }
 };
+
+
 export const giveAccess = async (req, res) => {
   let { fileId, sharedUserId } = req.body;
 

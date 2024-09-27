@@ -4,31 +4,20 @@ import userSchema from "../models/User.js";
 
 const authentication = async (req, res, next) => {
   try {
-    const token =
-      req.cookies?.accessToken ||
-      req.header("Authorization")?.replace("Bearer ", "");
+    const header = req.header("Authorization");
 
-    if (!token) {
-      return res.status(401).json(
-        { message: "unauthorized" }
-      );
+    if (!header || !header.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Authorization Failed" });
     }
-    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    const user = await userSchema
-      .findById(decodedToken?._id)
-      .select("-password");
-    if (!user) {
-      return res.status(401).json(
-        { message: 'invalidToken'}
-      );
-    }
-
-    req.user = user;
+    const accesToken = header.split(" ");
+    const token = accesToken[1];
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    console.log(decoded)
+    req.user = decoded;
+    
     next();
   } catch (error) {
-    return res.status(401).json(
-      { message: error.message }
-    );
+    return res.status(403).json({ message: error.message });
   }
 };
 

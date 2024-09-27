@@ -20,8 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 app.use(cookieParser());
 const options = {
-  origin: "http://localhost:3000",
-  useSucessStatus: 200,
+  origin: "http://localhost:3000",            // Allow requests from React app on localhost:3000
+  credentials: true,                           // Allow credentials (cookies, authorization headers)
+  optionsSuccessStatus: 200                    // Some browsers (like IE11) need this for successful preflight
 };
 app.use(cors(options));
 async function main() {
